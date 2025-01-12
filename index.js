@@ -13,13 +13,17 @@ app.use(express.json());
 app.use(cors());
 
 const DATABASE_URL = process.env.DATABASE_URL;
-
-const IndiviualDatbase = moongose.connect(DATABASE_URL);
-console.log(IndiviualDatbase);
+const PORT = process.env.PORT;
 
 app.get("/Indiviual/AllTodos", async function (req, res) {
   //some logic to retrive all todos which type is indivial todos
-  const allTodosWithIndiviualType = await TodoDatabase.find({
+
+  const IndiviualDatbase = await moongose.connect(DATABASE_URL);
+  const MyModel = await moongose.models();
+  console.log(MyModel);
+  console.log("Sinehfis /: ", MyModel);
+
+  const allTodosWithIndiviualType = await MyModel.find({
     type: "Indiviual",
   });
 
@@ -119,6 +123,6 @@ app.get("/Indiviual/AllTodos", async function (req, res) {
 //   res.json({ msg: "Todo Has been updated to NotCompleted in Db" });
 // });
 
-// app.listen(PORT, function () {
-//   console.log("Server is up and runnig");
-// });
+app.listen(PORT, function () {
+  console.log("Server is up and runnig");
+});
