@@ -1,6 +1,6 @@
 import express from "express";
 import dotenv from "dotenv";
-
+import { TodoSchema } from "./types.js";
 import cors from "cors";
 
 import moongose from "mongoose";
@@ -18,55 +18,45 @@ const PORT = process.env.PORT;
 moongose.connect(DATABASE_URL);
 
 app.get("/Indiviual/AllTodos", async function (req, res) {
-  //some logic to retrive all todos which type is indivial todos
-
+  //Used Stack overflow to slove this problem lol
   const collectiossn = mongoose.connection.db.collection("todos");
-
   const allTodosWithIndiviualType = collectiossn.find({
     type: "Indiviual",
   });
-
-  const transcripts = await allTodosWithIndiviualType.toArray();
-  console.log(transcripts);
-  // const allTodosWithIndiviualType = await indivialTodo.find({
-  //   type: "Indiviual",
-  // });
-
-  // if (!allTodosWithIndiviualType) {
-  //   res.status(401).json({
-  //     msg: "Cannot get the Todos with Indiviual type",
-  //   });
-  // }
-  res.json({ msg: "working" });
-  // res.json({ allTodosWithIndiviualType });
+  const allTodosWithIndiviualTypeArray =
+    await allTodosWithIndiviualType.toArray();
+  res.json({ allTodosWithIndiviualTypeArray });
 });
 
-// app.post("/GlobalTodos/CreateTodo", async function (req, res) {
-//   const { title, description, username } = req.body;
-//   //Make input Valdaition for Login Work under this logic
-//   //   const ParsedUserInputs = TodoSchema.safeParse(req.body);
-//   //   if (!ParsedUserInputs.success) {
-//   //     return res.json({
-//   //       msg: "Invalid Title or Description length",
-//   //     });
-//   //   }
+app.post("/Indiviual/CreateTodo", async function (req, res) {
+  const { title, description, username } = req.body;
+  //Make input Valdaition for Login Work under this logic
+  const ParsedUserInputs = TodoSchema.safeParse(req.body);
+  if (!ParsedUserInputs.success) {
+    return res.json({
+      msg: "Invalid Title or Description length",
+    });
+  }
 
-//   const CreatingTodo = await TodoDatabase.create({
-//     type: "Indiviual",
-//     title: title,
-//     description: description,
-//     username: username,
-//     isCompleted: false,
-//   });
+  const connectionsz = mongoose.connection.db.collection("todos");
+  const creatingIndivualTodo = await connectionsz.insertOne({
+    username: username,
+    type: "Indivual",
+    title: title,
+    description: description,
+    isCompleted: false,
+  });
 
-//   if (!CreatingTodo) {
-//     res.status(401).json({
-//       msg: "UnFortunately Cannot add into DataBase",
-//     });
-//     return;
-//   }
-//   res.json({ msg: "Todo has been SuccessFully added to DataBase" });
-// });
+  console.log(creatingIndivualTodo);
+
+  if (!creatingIndivualTodo) {
+    res.status(401).json({
+      msg: "UnFortunately Cannot add into DataBase",
+    });
+    return;
+  }
+  res.json({ msg: "Todo has been SuccessFully added to DataBase" });
+});
 
 // app.put("/GlobalTodos/Completed", async function (req, res) {
 //   const updateTodoId = req.body.id;
