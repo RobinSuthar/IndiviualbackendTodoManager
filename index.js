@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 import cors from "cors";
 
 import moongose from "mongoose";
+import mongoose from "mongoose";
 
 dotenv.config();
 
@@ -14,25 +15,30 @@ app.use(cors());
 
 const DATABASE_URL = process.env.DATABASE_URL;
 const PORT = process.env.PORT;
+moongose.connect(DATABASE_URL);
 
 app.get("/Indiviual/AllTodos", async function (req, res) {
   //some logic to retrive all todos which type is indivial todos
 
-  const IndiviualDatbase = await moongose.connect(DATABASE_URL);
-  const MyModel = await moongose.models();
-  console.log(MyModel);
-  console.log("Sinehfis /: ", MyModel);
+  const collectiossn = mongoose.connection.db.collection("todos");
 
-  const allTodosWithIndiviualType = await MyModel.find({
+  const allTodosWithIndiviualType = collectiossn.find({
     type: "Indiviual",
   });
 
-  if (!allTodosWithIndiviualType) {
-    res.status(401).json({
-      msg: "Cannot get the Todos with Indiviual type",
-    });
-  }
-  res.json({ allTodosWithIndiviualType });
+  const transcripts = await allTodosWithIndiviualType.toArray();
+  console.log(transcripts);
+  // const allTodosWithIndiviualType = await indivialTodo.find({
+  //   type: "Indiviual",
+  // });
+
+  // if (!allTodosWithIndiviualType) {
+  //   res.status(401).json({
+  //     msg: "Cannot get the Todos with Indiviual type",
+  //   });
+  // }
+  res.json({ msg: "working" });
+  // res.json({ allTodosWithIndiviualType });
 });
 
 // app.post("/GlobalTodos/CreateTodo", async function (req, res) {
